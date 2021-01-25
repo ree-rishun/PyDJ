@@ -1,5 +1,6 @@
 import numpy as np
 import librosa  # FFmpegのインストールも必要
+import os       # ファイル探索用
 
 # 設定値
 duration = 30
@@ -36,4 +37,11 @@ def get_bpm(filepath):
     return np.argmax(x_bpm)
 
 
-print(get_bpm("test/billie_mix.mp3"))
+music_directory = "test/"
+
+for file in os.listdir(music_directory):
+    file_path = music_directory + file
+    file_info = os.path.splitext(file_path)
+
+    if file_info[1] == '.mp3':
+        print(file_path + "\tBPM: " + str(get_bpm(file_path)))
