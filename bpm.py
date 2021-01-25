@@ -37,11 +37,18 @@ def get_bpm(filepath):
     return np.argmax(x_bpm)
 
 
-music_directory = "test/"
+# 特定のディレクトリ内の全ファイルのBPM取得
+def load_directory(directory):
+    for file in os.listdir(directory):
+        # ファイルのパスを作成
+        file_path = directory + file
 
-for file in os.listdir(music_directory):
-    file_path = music_directory + file
-    file_info = os.path.splitext(file_path)
+        # ファイルの情報を取得
+        file_info = os.path.splitext(file_path)
 
-    if file_info[1] == '.mp3':
-        print(file_path + "\tBPM: " + str(get_bpm(file_path)))
+        # MP3のみ抽出
+        if file_info[1] == '.mp3':
+            print(file_path + "\tBPM: " + str(get_bpm(file_path)))
+
+
+load_directory("test/")
