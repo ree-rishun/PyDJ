@@ -84,6 +84,9 @@ class Track:
             self.name = file_info[0]
             tracks_db.add_track(self.name, self.filepath, self.bpm)
 
+        # その他初期値
+        self.play_time = 0  # 再生時間
+
     # 楽曲情報の取得
     def get_music_info(self):
         print(self.filepath + "\tBPM: " + str(self.get_bpm(self.filepath)))
@@ -136,6 +139,32 @@ class Track:
         # CSV出力
         np.savetxt('beat/test.csv', beat_times)
 
+    # 楽曲の同期
+    def beat_sync(self, target_play_time):
+        # 近いタイムスタンプとの差を取得
+        self_near_time = find_nearest([], self.play_time)
+        target_near_time = find_nearest([], target_play_time)
+
+        delay_time = 0
+
+        # 現在の再生時間と一番近いタイムスタンプとの位置関係を取得
+        if self.play_time < self_near_time:
+            if target_play_time < target_near_time:
+                delay_time = (target_near_time - target_play_time) + (-self_near_time + self.play_time)
+            else:
+                delay_time = (-target_near_time + target_play_time) + (self_near_time - self.play_time)
+        else:
+            if target_play_time < target_near_time:
+                delay_time = - ((target_near_time - target_play_time) + (-self_near_time + self.play_time))
+            else:
+                delay_time = (target_near_time - target_play_time) + (-self_near_time + self.play_time)
+
+        # 曲の現在時間を取得
+        target_now_time = 0
+
+        # 加算
+        target_now_time + delay_time
+
 
 # 特定のディレクトリ内の全ファイルのBPM取得
 def load_directory(directory):
@@ -149,11 +178,6 @@ def load_directory(directory):
         # MP3のみ抽出
         if file_info[1] == '.mp3':
             Track(filepath)
-
-
-# 楽曲の同期
-def beat_sync(time_a, time_b):
-    pass
 
 
 # numpy配列から最も近い値を取得
