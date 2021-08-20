@@ -3,9 +3,14 @@ import librosa  # FFmpegのインストールも必要
 import os       # ファイル探索用
 import csv
 import sqlite3
+import pygame
 
 # テーブルを作成
 dbname = 'db/track.db'
+
+# チャンネル
+channel_1 = pygame.mixer.Channel(1)
+channel_2 = pygame.mixer.Channel(2)
 
 
 # 楽曲用データベース
@@ -86,6 +91,7 @@ class Track:
 
         # その他初期値
         self.play_time = 0  # 再生時間
+        self.sound = pygame.mixer.Sound(self.filepath)
 
     # 楽曲情報の取得
     def get_music_info(self):
@@ -145,8 +151,6 @@ class Track:
         self_near_time = find_nearest([], self.play_time)
         target_near_time = find_nearest([], target_play_time)
 
-        delay_time = 0
-
         # 現在の再生時間と一番近いタイムスタンプとの位置関係を取得
         if self.play_time < self_near_time:
             if target_play_time < target_near_time:
@@ -163,7 +167,7 @@ class Track:
         target_now_time = 0
 
         # 加算
-        target_now_time + delay_time
+        self.sound.play(target_now_time + delay_time)
 
 
 # 特定のディレクトリ内の全ファイルのBPM取得
